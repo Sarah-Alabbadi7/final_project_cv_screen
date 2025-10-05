@@ -173,12 +173,6 @@ Minor weight is given to education or experience keywords, giving a more natural
 
 ---
 
-## License
-
-MIT License – free to use and modify.  
-Created for academic and demo use.
-
----
 
 ## Authors
 
@@ -187,4 +181,5 @@ Focused on building real-world AI tools for HR automation
 Passionate about NLP, resume parsing, and full-stack development
 
 -
+
 
