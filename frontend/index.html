@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CV Screening — App</title>
+
+  <!-- Tailwind & Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+    .glass{background:rgba(255,255,255,.06);backdrop-filter:blur(6px)}
+    .card{border-radius:.75rem;box-shadow:0 6px 18px rgba(2,6,23,.12)}
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100 p-4">
+  <header class="max-w-6xl mx-auto flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <h1 class="text-2xl font-semibold">CV Screening — Demo</h1>
+      <span id="authBadge" class="text-xs px-2 py-1 rounded bg-slate-700/60">auth: checking…</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="signOutBtn" class="px-3 py-1 rounded card glass hidden">Sign out</button>
+      <button id="themeBtn" class="px-3 py-1 rounded card glass">Toggle theme</button>
+      <nav class="hidden sm:flex gap-2 text-sm opacity-90">
+        <a href="#/" class="navlink px-3 py-1 rounded hover:bg-slate-700">Home</a>
+        <a href="#/job" class="navlink px-3 py-1 rounded hover:bg-slate-700">Job</a>
+      </nav>
+      <button id="mobileMenuBtn" class="sm:hidden px-3 py-1 rounded card">Menu</button>
+    </div>
+  </header>
+
+  <main id="app" class="max-w-6xl mx-auto"></main>
+
+  <footer class="max-w-6xl mx-auto mt-8 text-sm text-slate-400">Built as a single-file SPA — connects to your FastAPI backend.</footer>
+
+  <!-- HOME -->
+  <template id="tpl-home">
+    <section class="card p-6 glass">
+      <h2 class="text-xl font-medium mb-3">Create Job</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <input id="title" placeholder="Job title" class="col-span-3 border rounded p-2 bg-transparent" />
+        <textarea id="jd" placeholder="Paste job description (e.g., 'Mandatory: Python, SQL; Preferred: Docker')" class="col-span-3 border rounded p-2 h-28 bg-transparent"></textarea>
+        <div class="col-span-3 flex flex-wrap gap-2 items-center">
+          <button id="createJobBtn" data-auth class="bg-blue-600 text-white px-4 py-2 rounded">Create Job</button>
+          <button id="demoJobBtn" data-auth class="bg-slate-600 px-4 py-2 rounded">Fill demo</button>
+
+          <label class="text-sm opacity-80 ml-2">Field:</label>
+          <select id="demoField" class="bg-slate-800 text-slate-100 border border-slate-600 rounded p-2
+            focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400
+            [&>option]:bg-slate-800 [&>option]:text-slate-100">
+            <option value="">Any</option>
+            <option>accounting</option><option>software</option><option>data</option>
+            <option>civil</option><option>mechanical</option><option>electrical</option>
+            <option>healthcare</option><option>education</option>
+          </select>
+          <span id="demoStatus" class="text-xs text-slate-400"></span>
+        </div>
+      </div>
+      <p class="mt-3 text-sm text-slate-300">After creating a job you’ll be redirected to upload CVs and view ranked candidates & visualizations.</p>
+    </section>
+  </template>
+
+  <!-- JOB -->
+  <template id="tpl-job">
+    <section class="card p-6 glass">
+      <div class="flex items-start justify-between gap-4 flex-col sm:flex-row">
+        <div>
+          <h2 id="jobTitle" class="text-lg font-medium">Job</h2>
+          <div id="jobJd" class="mt-2 text-sm text-slate-300 max-w-2xl whitespace-pre-wrap"></div>
+        </div>
+        <div class="flex gap-2 items-center">
+          <button id="exportBtn" data-auth class="px-3 py-1 rounded bg-gray-700">Export CSV</button>
+          <button id="refreshBtn" data-auth class="px-3 py-1 rounded bg-gray-700">Refresh (ranked)</button>
+        </div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="col-span-3">
+          <label class="block text-sm mb-1">Upload CV(s) — PDF only</label>
+          <div id="dropZone" class="p-4 border-dashed border-2 rounded border-slate-600 text-sm">
+            Drag & drop files here or <input id="files" type="file" multiple accept="application/pdf" class="ml-2" />
+          </div>
+          <div class="mt-2 flex gap-2">
+            <button id="uploadBtn" data-auth class="bg-green-600 px-3 py-1 rounded">Upload</button>
+            <button id="clearBtn" class="bg-red-600 px-3 py-1 rounded">Clear files</button>
+            <div id="uploadProgress" class="text-sm ml-2"></div>
+          </div>
+        </div>
+
+        <div class="col-span-3 sm:col-span-2">
+          <h3 class="font-medium">Candidates</h3>
+          <div id="candidatesArea" class="mt-2 bg-slate-900/30 rounded p-3 overflow-auto max-h-72">
+            <table id="candidatesTable" class="w-full text-sm table-auto">
+              <thead class="text-slate-300">
+                <tr>
+                  <th class="p-1 text-left">#</th>
+                  <th class="p-1 text-left">Name</th>
+                  <th class="p-1 text-left">Score</th>
+                  <th class="p-1 text-left">Decision</th>
+                  <th class="p-1 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-span-3 sm:col-span-1">
+          <h3 class="font-medium">Visuals</h3>
+          <div class="mt-2 w-full h-64">
+            <canvas id="scoreChart" class="w-full h-full"></canvas>
+          </div>
+          <div class="mt-3 text-xs text-slate-400">Top candidates score distribution</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50">
+      <div class="bg-slate-900 p-5 rounded shadow-xl w-[min(600px,92vw)]">
+        <div class="flex justify-between items-center mb-3">
+          <h4 class="font-semibold">Candidate details</h4>
+          <button id="modalClose" class="px-2 py-1 bg-slate-700 rounded">Close</button>
+        </div>
+        <div id="modalBody" class="text-sm whitespace-pre-wrap"></div>
+      </div>
+    </div>
+  </template>
+
+<script>
+  /* ------------------------------- Firebase Auth (no auto-anonymous) ------------------------------- */
+  const FIREBASE_CONFIG = {
+    apiKey:     "AIzaSyBU3W41QoplQ1XuJbB-Q7K8qHmG-v5eeE0",
+    authDomain: "cv-screening-40a27.firebaseapp.com",
+    projectId:  "cv-screening-40a27",
+    appId:      "1:694775477157:web:2bfa3934cd74a646b42e4c"
+  };
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const auth = firebase.auth();
+
+  let idToken = null;
+  let authReadyResolve;
+  const authReady = new Promise(r => authReadyResolve = r);
+
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      // No user? Send to login page (no flashing loop now).
+      document.getElementById('authBadge').textContent = 'auth: redirecting to login…';
+      location.replace('login.html');
+      return;
+    }
+    idToken = await user.getIdToken();
+    document.getElementById('authBadge').textContent = `auth: ${user.isAnonymous ? 'anonymous' : (user.email || 'user')} ✓`;
+    document.getElementById('signOutBtn').classList.remove('hidden');
+    document.querySelectorAll('[data-auth]').forEach(b => b.disabled = false);
+    authReadyResolve?.(); authReadyResolve = null;
+  });
+
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    try { await auth.signOut(); } catch(e) { console.error(e); }
+    location.replace('login.html');
+  });
+
+  // Helper: fetch with Authorization header
+  async function apiFetch(path, options = {}) {
+    await authReady; // ensure token
+    const headers = new Headers(options.headers || {});
+    if (idToken) headers.set('Authorization', `Bearer ${idToken}`);
+    return fetch(`${apiBase()}${path}`, { ...options, headers });
+  }
+
+  /* --------------------------------- Router --------------------------------- */
+  const app = document.getElementById('app');
+  const routes = {'/': renderHome, '/job': renderJob};
+  window.addEventListener('hashchange', route);
+  window.addEventListener('load', route);
+
+  let state = { currentJobId: null, job: null, rows: [] };
+  function route(){ (routes[location.hash.replace('#','') || '/'] || renderHome)(); }
+
+  /* --------------------------------- Home ---------------------------------- */
+  function renderHome(){
+    const tpl = document.getElementById('tpl-home').content.cloneNode(true);
+    app.innerHTML = ''; app.appendChild(tpl);
+
+    // auth-gated buttons (will be enabled after onAuthStateChanged)
+    document.querySelectorAll('[data-auth]').forEach(b => b.disabled = true);
+
+    document.getElementById('createJobBtn').onclick = createJob;
+    document.getElementById('demoJobBtn').onclick = fillDemoFromApi;
+  }
+
+  async function fillDemoFromApi(){
+    const btn = document.getElementById('demoJobBtn');
+    const status = document.getElementById('demoStatus');
+    const field = document.getElementById('demoField')?.value || '';
+    try{
+      btn.disabled = true; status.textContent = 'Fetching…';
+      const q = field ? `?field=${encodeURIComponent(field)}` : '';
+      const res = await apiFetch(`/demo_job${q}`);
+      if(!res.ok) throw new Error(await res.text());
+      const js = await res.json();
+      document.getElementById('title').value = js.title || '';
+      document.getElementById('jd').value = js.jd_text || '';
+      status.textContent = `Loaded ${js.field || 'random'} demo`;
+    }catch(e){
+      console.error(e);
+      status.textContent = 'Failed to fetch demo';
+      alert('Could not fetch a demo job.');
+    }finally{
+      btn.disabled = false;
+      setTimeout(()=>{ status.textContent=''; }, 1200);
+    }
+  }
+
+  /* ----------------------------------- Job --------------------------------- */
+  function renderJob(){
+    const tpl = document.getElementById('tpl-job').content.cloneNode(true);
+    app.innerHTML = ''; app.appendChild(tpl);
+
+    document.getElementById('jobTitle').innerText =
+      state.job ? `${(state.job.title||'Job').toLowerCase()} (id ${state.currentJobId})` : `Job (id ${state.currentJobId||'?'})`;
+    document.getElementById('jobJd').innerText = state.job?.jd_text || '';
+
+    // Upload wiring
+    const drop = document.getElementById('dropZone');
+    const filesInput = document.getElementById('files');
+    let staged = [];
+    ['dragenter','dragover'].forEach(e=>drop.addEventListener(e, ev=>{ev.preventDefault(); drop.classList.add('ring-2','ring-slate-400');}));
+    ['dragleave','drop'].forEach(e=>drop.addEventListener(e, ev=>{ev.preventDefault(); drop.classList.remove('ring-2','ring-slate-400');}));
+    drop.addEventListener('drop', ev=>{ if(ev.dataTransfer?.files){ staged = Array.from(ev.dataTransfer.files); filesInput.files = ev.dataTransfer.files; showStaged(); }});
+    filesInput.addEventListener('change', ()=>{ staged = Array.from(filesInput.files); showStaged(); });
+    function showStaged(){ document.getElementById('uploadProgress').innerText = staged.map(f=>f.name).join(', '); }
+    document.getElementById('clearBtn').onclick = ()=>{ staged = []; filesInput.value = null; showStaged(); };
+
+    document.getElementById('uploadBtn').onclick = async ()=>{
+      if(!state.currentJobId) return alert('Create job first');
+      const fd = new FormData();
+      for(const f of (filesInput.files||[])) fd.append('files', f);
+      document.getElementById('uploadProgress').innerText = 'Uploading...';
+      try{
+        const res = await apiFetch(`/jobs/${state.currentJobId}/upload`, { method:'POST', body:fd });
+        if(!res.ok) throw new Error(await res.text());
+        await res.json();
+        document.getElementById('uploadProgress').innerText = 'Upload done';
+        await refreshRanked();
+      }catch(err){
+        console.error(err);
+        document.getElementById('uploadProgress').innerText = 'Upload failed';
+        alert('Upload failed. See console.');
+      }
+    };
+
+    document.getElementById('refreshBtn').onclick = refreshRanked;
+    document.getElementById('exportBtn').onclick = downloadCsv;
+
+    // Modal
+    document.getElementById('modalClose').onclick = ()=>document.getElementById('modal').classList.add('hidden');
+
+    // Chart
+    initChart();
+    refreshRanked();
+  }
+
+  /* ------------------------------- API helpers ----------------------------- */
+  function apiBase(){ return 'http://127.0.0.1:8000'; }
+
+  async function createJob(){
+    const title = (document.getElementById('title').value||'').trim();
+    const jd_text = (document.getElementById('jd').value||'').trim();
+    if(!title) return alert('Title required');
+
+    const fd = new FormData();
+    fd.append('title', title);
+    fd.append('jd_text', jd_text);
+
+    try{
+      const res = await apiFetch('/jobs', { method:'POST', body: fd });
+      if(!res.ok) throw new Error(await res.text());
+      const js = await res.json();
+      state.currentJobId = js.job_id || js.id || js.jobId;
+      js.jd_text = jd_text; // for display
+      state.job = js;
+      sessionStorage.setItem('lastJob', JSON.stringify({id:state.currentJobId, job:js}));
+      location.hash = '#/job';
+    }catch(err){
+      console.error(err);
+      alert('Create job failed. See console.');
+    }
+  }
+
+  async function refreshRanked(){
+    if(!state.currentJobId){
+      const s = sessionStorage.getItem('lastJob');
+      if(s){ const o = JSON.parse(s); state.currentJobId = o.id; state.job = o.job; }
+      else return alert('Create or open a job first');
+    }
+    try{
+      const res = await apiFetch(`/jobs/${state.currentJobId}/candidates?sort=score_desc`);
+      if(!res.ok) throw new Error(await res.text());
+      const rows = await res.json();
+      state.rows = rows || [];
+      populateCandidates(state.rows);
+      updateChart(state.rows);
+    }catch(err){
+      console.error(err);
+      alert('Fetching candidates failed. See console.');
+    }
+  }
+
+  async function downloadCsv(){
+    if(!state.currentJobId) return;
+    try{
+      const res = await apiFetch(`/jobs/${state.currentJobId}/export.csv`);
+      if(!res.ok) throw new Error(await res.text());
+      const text = await res.text();
+      const blob = new Blob([text], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `job_${state.currentJobId}_candidates.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }catch(err){
+      console.error(err);
+      alert('Export failed. See console.');
+    }
+  }
+
+  /* ----------------------------- Table & Modal ----------------------------- */
+  function populateCandidates(rows){
+    const tbody = document.querySelector('#candidatesTable tbody');
+    tbody.innerHTML = '';
+    if(!Array.isArray(rows) || rows.length === 0){
+      tbody.innerHTML = `<tr><td class="p-2 text-slate-400" colspan="5">No candidates yet.</td></tr>`;
+      return;
+    }
+    rows.forEach((r,i)=>{
+      const decision = (r.decision||'').toLowerCase();
+      const badge = decision
+        ? `<span class="px-2 py-0.5 rounded text-xs ${decision==='accept'?'bg-emerald-600/70':'bg-red-600/70'}">${r.decision}</span>`
+        : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="p-1">${i+1}</td>
+        <td class="p-1">${r.name || r.filename || ('Candidate '+(i+1))}</td>
+        <td class="p-1">${(typeof r.score==='number' ? r.score.toFixed(3) : r.score || '')}</td>
+        <td class="p-1">${badge}</td>
+        <td class="p-1"><button class="viewBtn px-2 py-0.5 rounded bg-slate-700" data-idx="${i}">View</button></td>`;
+      tbody.appendChild(tr);
+    });
+    document.querySelectorAll('.viewBtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>openModal(parseInt(btn.dataset.idx,10)));
+    });
+  }
+
+  function openModal(idx){
+    const r = state.rows[idx];
+    if(!r) return;
+    const modal = document.getElementById('modal');
+    const body = document.getElementById('modalBody');
+    const skills = Array.isArray(r.skills) ? r.skills.join(', ') : r.skills;
+    body.textContent =
+`Candidate #${idx+1}
+Name: ${r.name || ''}
+Email: ${r.email || ''}
+Score: ${typeof r.score==='number'?r.score.toFixed(3):r.score||''}
+Decision: ${r.decision || ''}
+
+Skills:
+${skills || ''}`;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  /* --------------------------------- Chart --------------------------------- */
+  let chart=null;
+  function initChart(){
+    const canvas = document.getElementById('scoreChart');
+    if(!canvas){ console.warn('scoreChart canvas not found'); return; }
+    const ctx = canvas.getContext('2d');
+    chart = new Chart(ctx, {
+      type:'bar',
+      data:{ labels:[], datasets:[{ label:'Score', data:[] }] },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        scales:{ y:{ beginAtZero:true, max:100 } },
+        plugins:{ legend:{ display:false } }
+      }
+    });
+  }
+  function updateChart(rows){
+    if(!chart) return;
+    const top = (rows||[]).slice(0,8);
+    chart.data.labels = top.map((r,i)=> r.name||('C'+(i+1)));
+    chart.data.datasets[0].data = top.map(r=> Number(r.score||0));
+    chart.update();
+  }
+
+  /* --------------------------------- Chrome -------------------------------- */
+  document.getElementById('themeBtn').addEventListener('click', ()=>{
+    document.body.classList.toggle('bg-white');
+    document.body.classList.toggle('text-slate-900');
+    document.body.classList.toggle('bg-gradient-to-br');
+  });
+
+  const ls = sessionStorage.getItem('lastJob');
+  if(ls){ const o = JSON.parse(ls); state.currentJobId=o.id; state.job=o.job; location.hash='#/job'; }
+  else location.hash = '#/';
+
+  document.getElementById('mobileMenuBtn').addEventListener('click', ()=>alert('Use the links or hash routes: #/ and #/job'));
+</script>
+</body>
+</html>

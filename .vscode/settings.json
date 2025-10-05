@@ -1,0 +1,12 @@
+{
+  "liveServer.settings.root": "/frontend",
+  "liveServer.settings.port": 8080,
+  "liveServer.settings.CustomBrowser": "chrome", 
+  "liveServer.settings.ignoreFiles": [
+    "**/*.db",
+    "**/*.sqlite*",
+    "backend/**",
+    "**/__pycache__/**",
+    "**/*.py"
+  ]
+}
