@@ -1,61 +1,71 @@
 # 🧠 CV Screening System
 
-An AI-powered web application that allows HR users to automatically screen CVs, extract skills and contact details, and rank candidates based on a job description.  
-Includes optional Firebase Authentication so each HR user can securely manage their own jobs and candidates.
+An AI-powered web application that allows HR users to automatically screen CVs, extract skills and contact details, and rank candidates based on job descriptions. Includes optional Firebase Authentication for secure user management.
 
 ---
 
 ## 📑 Table of Contents
 
-1. [Overview](#overview)  
-2. [Tech Stack](#tech-stack)  
-3. [Features](#features)  
-4. [Project Structure](#project-structure)  
-5. [Environment Variables](#environment-variables)  
-6. [Setup & Installation](#setup--installation)  
-   - [Backend](#backend)  
-   - [Frontend](#frontend)  
-7. [Firebase Setup (Optional Auth)](#firebase-setup-optional-auth)  
-8. [Usage Guide](#usage-guide)  
-9. [API Endpoints](#api-endpoints)  
-10. [How Scoring Works](#how-scoring-works)  
-11. [Troubleshooting](#troubleshooting)  
-12. [License](#license)  
-13. [Authors](#authors)
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Setup & Installation](#setup--installation)
+- [Firebase Setup](#firebase-setup-optional-auth)
+- [Usage Guide](#usage-guide)
+- [API Endpoints](#api-endpoints)
+- [How Scoring Works](#how-scoring-works)
+- [Authors](#authors)
 
 ---
 
-## Overview
+## 🎯 Overview
 
-This tool helps recruiters automatically extract and analyze information from uploaded PDF CVs, compare them to a job description, and generate ranked candidate lists with normalized scoring.  
-It supports Firebase Authentication, enabling each HR user to securely access only their own data.
-
----
-
-## Tech Stack
-
-- **Backend**: FastAPI + SQLModel + SQLite  
-- **Frontend**: Tailwind CSS + Chart.js (Single-page app)  
-- **Authentication**: Firebase (Anonymous or Email/Password)  
-- **AI/NLP**: Custom skill extraction and scoring algorithms
+This intelligent tool helps recruiters automatically extract and analyze information from uploaded PDF CVs, compare them against job descriptions, and generate ranked candidate lists with normalized scoring. Supports Firebase Authentication, enabling each HR user to securely access only their own data.
 
 ---
 
-## Features
+## 🛠 Tech Stack
 
-- Upload & Parse CVs (PDF + OCR fallback)  
-- Extract Skills, Contacts, and Education  
-- Automatic Scoring & Ranking  
-- Demo Job Generator across fields (accounting, engineering, healthcare, etc.)  
-- Export Candidates as CSV  
-- Optional Firebase Authentication  
-- Scoped Data Access — users only see their own jobs/candidates
+### Backend Technologies
+- ⚡ **FastAPI** – API routes, job creation, CV upload, scoring, and CSV export
+- 🧠 **SQLModel** – Database models and ORM interactions
+- 🗃️ **SQLite** – Lightweight, file-based database storage
+- 📄 **pdfplumber** – Text extraction from standard PDF resumes
+- 🖼️ **PyMuPDF (fitz)** – Scanned PDF processing for OCR fallback
+- 🔍 **pytesseract** – OCR on scanned resume images
+- 🧪 **RapidFuzz** – Fuzzy logic skill matching
+- 🔗 **regex** – Contact info extraction (email, phone, links)
+- 🧬 **spaCy** – NLP for skill normalization
+- ✅ **Pydantic** – Data validation and serialization
+- 📤 **jinja2** – CSV export template rendering
+- 🔐 **Firebase Admin SDK** – User identity verification
+- 🚀 **Uvicorn** – Development server with hot reload
+
+### Frontend Technologies
+- 🎨 **Tailwind CSS** – Clean, responsive styling
+- 📊 **Chart.js** – Candidate score visualization
+- 🔐 **Firebase Auth** – User session management
+- ⚡ **JavaScript (ES6+)** – Dynamic UI and API interactions
 
 ---
 
-## Project Structure
+## ✨ Features
 
-```
+- 📤 **Upload & Parse CVs** – PDF support with OCR fallback for scanned documents
+- 🔍 **Smart Extraction** – Automatically extracts skills, contacts, and education
+- 🏆 **Automatic Scoring** – AI-powered ranking based on job requirements
+- 🎭 **Demo Job Generator** – Pre-built templates across various fields
+- 📥 **Export Data** – Download candidate results as CSV
+- 🔒 **Secure Authentication** – Optional Firebase Auth with data scoping
+- 👥 **User Isolation** – Users only access their own jobs and candidates
+
+---
+
+## 📁 Project Structure
+
+```plaintext
 cv-screening/
 ├── backend/
 │   ├── app.py              # FastAPI app, routes, Firebase verification
@@ -70,116 +80,223 @@ cv-screening/
 │   ├── login.html          # Login / Signup page
 │   └── firebase.js         # Firebase config (optional split)
 ├── serviceAccountKey.json  # Firebase Admin SDK credentials
+└── README.md
 ```
 
 ---
 
-## Environment Variables
+## ⚙️ Environment Variables
 
-| Variable                     | Description                          | Example                                  |
-|-----------------------------|--------------------------------------|------------------------------------------|
-| `DATABASE_URL`              | DB connection string                 | `sqlite:///./cv_screening.db`            |
-| `AUTH_REQUIRED`             | Require Firebase Auth (`"1"` = yes) | `1`                                      |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Path to Firebase Admin JSON     | `C:\cv-screening\serviceAccountKey.json` |
-| `DEV_USER_ID`               | Used when auth is disabled           | `dev_user`                               |
-
----
-
-## Setup & Installation
-
-### Backend
-
-```powershell
-python -m venv .venv
-. .venv/Scripts/Activate.ps1
-pip install -r backend/requirements.txt
-
-# Set environment variables
-$env:AUTH_REQUIRED = "1"
-$env:GOOGLE_APPLICATION_CREDENTIALS = "C:\cv-screening\serviceAccountKey.json"
-
-# Start server
-uvicorn backend.app:app --reload --port 8000
-```
-
-Visit: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DATABASE_URL` | Database connection string | `sqlite:///./cv_screening.db` |
+| `AUTH_REQUIRED` | Require Firebase Auth (`"1"` = yes) | `1` |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to Firebase Admin JSON | `C:\cv-screening\serviceAccountKey.json` |
+| `DEV_USER_ID` | Default user when auth is disabled | `dev_user` |
 
 ---
 
-### Frontend
+## 🚀 Setup & Installation
 
-```bash
-cd frontend
-python -m http.server 5500
-```
+### Backend Setup
 
-Then open: [http://127.0.0.1:5500/login.html](http://127.0.0.1:5500/login.html)
+1. **Navigate to backend directory**
+   ```bash
+   cd backend
+   ```
+
+2. **Install Python dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Start the FastAPI server**
+   ```bash
+   uvicorn app:app --reload --port 8000
+   ```
+---
+
+## 🔐 Firebase Setup (Anonymous Auth)
+
+ **Enable Authentication Methods**
+   - Go to Firebase Console → Authentication → Sign-in Method
+   - Enable **Anonymous** and/or **Email/Password** authentication
 
 ---
 
-## Firebase Setup (Anonymous Auth)
+## 📖 Usage Guide
 
-1. In Firebase Console → Authentication → Sign-in Method, enable:
-   - Anonymous
-   - Email/Password (optional)
-
-2. In Project Settings → General → Web App, copy the web config and paste it into `login.html` and `index.html`.
-
-```
----
-
-## Usage Guide
-
-1. Open the login page → sign in or use anonymous mode  
-2. Go to `index.html` → fill a demo job or write a new job description  
-3. Upload one or more CV PDFs  
-4. View candidate scores and download results as CSV
+1. **Access Application** – Start from `login.html` for proper authentication flow
+2. **Authentication** – Sign in or use anonymous authentication
+3. **Create Job** – Use demo templates or write custom job descriptions
+4. **Upload CVs** – Drag and drop or select multiple PDF files
+5. **Review Results** – View ranked candidates with detailed scoring
+6. **Export Data** – Download candidate list as CSV for further analysis
 
 ---
 
-## API Endpoints
+## 🔌 API Endpoints
 
-| Endpoint                        | Method | Description                      |
-|---------------------------------|--------|----------------------------------|
-| `/health`                       | GET    | Check backend status             |
-| `/demo_job`                     | GET    | Returns random job description   |
-| `/jobs`                         | POST   | Create a new job                 |
-| `/jobs/{job_id}/upload`         | POST   | Upload CVs and score candidates  |
-| `/jobs/{job_id}/candidates`     | GET    | Retrieve candidates              |
-| `/jobs/{job_id}/export.csv`     | GET    | Export CSV                       |
-
----
-
-## How Scoring Works
-
-The app compares skills extracted from the CV with skills required in the job:
-
-- ≥4 matching skills → Excellent (90–100)  
-- 2–3 matches → Good (60–80)  
-- 1 match → Weak (Reject)  
-
-Minor weight is given to education or experience keywords, giving a more natural ranking.
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Backend status check |
+| `/demo_job` | GET | Returns random job description template |
+| `/jobs` | POST | Create a new job |
+| `/jobs/{job_id}/upload` | POST | Upload and score CVs |
+| `/jobs/{job_id}/candidates` | GET | Retrieve candidate list |
+| `/jobs/{job_id}/export.csv` | GET | Export candidates as CSV |
 
 ---
 
-## Troubleshooting
+## 🎯 How Scoring Works
 
-| Issue                     | Solution                                                  |
-|---------------------------|-----------------------------------------------------------|
-| Login page flashes away   | Start from `login.html`, not `index.html`                |
-| Firebase error            | Check Admin SDK path and environment variables            |
-| Fill Demo not working     | Ensure backend is running on port 8000                    |
-| No database entries       | Confirm `cv_screening.db` exists and is writable          |
+The AI compares extracted CV skills with job requirements using intelligent matching:
+
+| Match Level | Score Range | Description |
+|-------------|-------------|-------------|
+| **Excellent** | 90–100 | 4+ matching skills |
+| **Good** | 60–80 | 2–3 matching skills |
+| **Weak** | < 60 | 0–1 matching skills |
+
+Additional weight is given to education and experience keywords for more natural ranking.
 
 ---
 
+## 👥 Authors
 
-## Authors
+**Developed with ❤️ by Nouf Al-Rashdi & Sara Al-Abbadi**
 
-Developed by **Nouf Al-Rashdi** & **Sara Al-Abbadi**  
-Focused on building real-world AI tools for HR automation  
-Passionate about NLP, resume parsing, and full-stack development
+We're passionate about building real-world AI tools for HR automation, with expertise in NLP, resume parsing, and full-stack development.
 
--
+---
 
+<div align="center">
 
+*⭐ Star this repo if you find it helpful! ⭐*
+
+</div>
+
+<script>
+// Table of Contents smooth scrolling
+document.addEventListener('DOMContentLoaded', function() {
+    const links = document.querySelectorAll('a[href^="#"]');
+    
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+});
+</script>
+
+<style>
+/* Beautiful styling for the README */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2, h3, h4 {
+    color: #2d3748;
+    margin-top: 1.5em;
+}
+
+h1 {
+    border-bottom: 3px solid #4299e1;
+    padding-bottom: 10px;
+}
+
+h2 {
+    border-left: 4px solid #4299e1;
+    padding-left: 15px;
+    margin-top: 2em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background-color: #f7fafc;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f8fafc;
+}
+
+code {
+    background-color: #f7fafc;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+}
+
+pre {
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    border-left: 4px solid #4299e1;
+}
+
+a {
+    color: #4299e1;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Custom styling for feature sections */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.feature-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #4299e1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
