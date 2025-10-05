@@ -6,17 +6,20 @@ An AI-powered web application that allows HR users to automatically screen CVs, 
 
 ## 📑 Table of Contents
 
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Environment Variables](#environment-variables)
-- [Setup & Installation](#setup--installation)
-- [Firebase Setup](#firebase-setup)
-- [Usage Guide](#usage-guide)
-- [API Endpoints](#api-endpoints)
-- [How Scoring Works](#how-scoring-works)
-- [Authors](#authors)
+- 🎯 Overview
+- 🛠 Tech Stack
+- ✨ Features
+- 📁 Project Structure
+- ⚙️ Environment Variables
+- 🚀 Setup & Installation
+- Backend Setup
+- Frontend Setup
+- 🔐 Firebase Setup
+- 📖 Usage Guide
+- 🔌 API Endpoints
+- 🎯 How Scoring Works
+- 👥 Authors
+
 
 ---
 
@@ -185,3 +188,4 @@ Additional weight is given to education and experience keywords for more natural
 ## 👥 Authors
 
 **Developed with ❤️ by Nouf Al-Rashdi & Sara Al-Abbadi**
+
