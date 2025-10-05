@@ -1,12 +1,12 @@
-
 # 🧠 CV Screening System
 
-An AI-powered web application that allows HR users to automatically **screen CVs**, **extract skills and contact details**, and **rank candidates** based on a job description.  
-Includes optional **Firebase Authentication** so each HR user can securely manage their own jobs and candidates.
+An AI-powered web application that allows HR users to automatically screen CVs, extract skills and contact details, and rank candidates based on a job description.  
+Includes optional Firebase Authentication so each HR user can securely manage their own jobs and candidates.
 
 ---
 
 ## 📑 Table of Contents
+
 1. [Overview](#overview)  
 2. [Tech Stack](#tech-stack)  
 3. [Features](#features)  
@@ -25,14 +25,14 @@ Includes optional **Firebase Authentication** so each HR user can securely manag
 
 ---
 
-## 💡 Overview
+## Overview
 
-This tool helps recruiters automatically extract and analyze information from uploaded **PDF CVs**, compare them to a **job description**, and generate **ranked candidate lists** with normalized scoring.  
-It supports **Firebase Authentication**, enabling each HR user to securely access only their own data.
+This tool helps recruiters automatically extract and analyze information from uploaded PDF CVs, compare them to a job description, and generate ranked candidate lists with normalized scoring.  
+It supports Firebase Authentication, enabling each HR user to securely access only their own data.
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 - **Backend**: FastAPI + SQLModel + SQLite  
 - **Frontend**: Tailwind CSS + Chart.js (Single-page app)  
@@ -41,19 +41,19 @@ It supports **Firebase Authentication**, enabling each HR user to securely acces
 
 ---
 
-## 🌟 Features
+## Features
 
-- 📄 Upload & Parse CVs (PDF + OCR fallback)  
-- 🧠 Extract Skills, Contacts, and Education  
-- 📊 Automatic Scoring & Ranking  
-- 🧰 Demo Job Generator across fields (accounting, engineering, healthcare, etc.)  
-- 📥 Export Candidates as CSV  
-- 🔒 Optional Firebase Authentication  
-- 🧾 Scoped Data Access — users only see their own jobs/candidates
+- Upload & Parse CVs (PDF + OCR fallback)  
+- Extract Skills, Contacts, and Education  
+- Automatic Scoring & Ranking  
+- Demo Job Generator across fields (accounting, engineering, healthcare, etc.)  
+- Export Candidates as CSV  
+- Optional Firebase Authentication  
+- Scoped Data Access — users only see their own jobs/candidates
 
 ---
 
-## 🧱 Project Structure
+## Project Structure
 
 ```
 cv-screening/
@@ -74,7 +74,7 @@ cv-screening/
 
 ---
 
-## 🔧 Environment Variables
+## Environment Variables
 
 | Variable                     | Description                          | Example                                  |
 |-----------------------------|--------------------------------------|------------------------------------------|
@@ -85,9 +85,9 @@ cv-screening/
 
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
-### 🖥 Backend
+### Backend
 
 ```powershell
 python -m venv .venv
@@ -102,26 +102,26 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "C:\cv-screening\serviceAccountKey.json"
 uvicorn backend.app:app --reload --port 8000
 ```
 
-✅ Visit: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+Visit: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
 
 ---
 
-### 🌐 Frontend
+### Frontend
 
 ```bash
 cd frontend
 python -m http.server 5500
 ```
 
-Then open 👉 [http://127.0.0.1:5500/login.html](http://127.0.0.1:5500/login.html)
+Then open: [http://127.0.0.1:5500/login.html](http://127.0.0.1:5500/login.html)
 
 ---
 
-## 🔐 Firebase Setup (Optional Auth)
+## Firebase Setup (Optional Auth)
 
 1. In Firebase Console → Authentication → Sign-in Method, enable:
-   - ✅ Anonymous
-   - ✅ Email/Password (optional)
+   - Anonymous
+   - Email/Password (optional)
 
 2. In Project Settings → General → Web App, copy the web config and paste it into `login.html` and `index.html`.
 
@@ -138,7 +138,7 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/serviceAccountKey.json
 
 ---
 
-## 🧭 Usage Guide
+## Usage Guide
 
 1. Open the login page → sign in or use anonymous mode  
 2. Go to `index.html` → fill a demo job or write a new job description  
@@ -147,7 +147,7 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/serviceAccountKey.json
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 | Endpoint                        | Method | Description                      |
 |---------------------------------|--------|----------------------------------|
@@ -160,7 +160,7 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/serviceAccountKey.json
 
 ---
 
-## 🧮 How Scoring Works
+## How Scoring Works
 
 The app compares skills extracted from the CV with skills required in the job:
 
@@ -172,7 +172,7 @@ Minor weight is given to education or experience keywords, giving a more natural
 
 ---
 
-## 🧰 Troubleshooting
+## Troubleshooting
 
 | Issue                     | Solution                                                  |
 |---------------------------|-----------------------------------------------------------|
@@ -183,19 +183,17 @@ Minor weight is given to education or experience keywords, giving a more natural
 
 ---
 
-## 📄 License
+## License
 
 MIT License – free to use and modify.  
-❤️ Created for academic and demo use.
+Created for academic and demo use.
 
 ---
 
-## 👩‍💻 Authors
+## Authors
 
 Developed by **Nouf Al-Rashdi** & **Sara Al-Abbadi**  
-🎓 Focused on building real-world AI tools for HR automation  
-💡 Passionate about NLP, resume parsing, and full-stack development
+Focused on building real-world AI tools for HR automation  
+Passionate about NLP, resume parsing, and full-stack development
 
----
-
-Let me know if you'd like help publishing this to GitHub, generating a project banner, or turning it into a GitHub Pages site for demo purposes.
+-
