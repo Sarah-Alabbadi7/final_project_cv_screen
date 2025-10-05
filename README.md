@@ -117,7 +117,7 @@ Then open: [http://127.0.0.1:5500/login.html](http://127.0.0.1:5500/login.html)
 
 ---
 
-## Firebase Setup (Optional Auth)
+## Firebase Setup (Anonymous Auth)
 
 1. In Firebase Console → Authentication → Sign-in Method, enable:
    - Anonymous
@@ -125,17 +125,7 @@ Then open: [http://127.0.0.1:5500/login.html](http://127.0.0.1:5500/login.html)
 
 2. In Project Settings → General → Web App, copy the web config and paste it into `login.html` and `index.html`.
 
-3. Add these Authorized Domains:
-   - `localhost`
-   - `127.0.0.1`
-   - `cv-screening-40a27.web.app`
-
-4. Place your `serviceAccountKey.json` in the project root and set:
-
-```bash
-GOOGLE_APPLICATION_CREDENTIALS=path/to/serviceAccountKey.json
 ```
-
 ---
 
 ## Usage Guide
@@ -197,3 +187,4 @@ Focused on building real-world AI tools for HR automation
 Passionate about NLP, resume parsing, and full-stack development
 
 -
+
