@@ -12,7 +12,7 @@ An AI-powered web application that allows HR users to automatically screen CVs, 
 - [Project Structure](#project-structure)
 - [Environment Variables](#environment-variables)
 - [Setup & Installation](#setup--installation)
-- [Firebase Setup](#firebase-setup-optional-auth)
+- [Firebase Setup](#firebase-setup)
 - [Usage Guide](#usage-guide)
 - [API Endpoints](#api-endpoints)
 - [How Scoring Works](#how-scoring-works)
@@ -65,7 +65,7 @@ This intelligent tool helps recruiters automatically extract and analyze informa
 
 ## 📁 Project Structure
 
-```plaintext
+```
 cv-screening/
 ├── backend/
 │   ├── app.py              # FastAPI app, routes, Firebase verification
@@ -114,9 +114,29 @@ cv-screening/
    ```bash
    uvicorn app:app --reload --port 8000
    ```
+
+### Frontend Setup
+
+1. **Navigate to frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Start a local server**
+   ```bash
+   # Using Python
+   python -m http.server 3000
+   
+   # Or using Node.js http-server
+   npx http-server -p 3000
+   ```
+
+3. **Access the application**
+   - Open `http://localhost:3000/login.html` in your browser
+
 ---
 
-## 🔐 Firebase Setup (Anonymous Auth)
+## 🔐 Firebase Setup
 
  **Enable Authentication Methods**
    - Go to Firebase Console → Authentication → Sign-in Method
@@ -165,138 +185,3 @@ Additional weight is given to education and experience keywords for more natural
 ## 👥 Authors
 
 **Developed with ❤️ by Nouf Al-Rashdi & Sara Al-Abbadi**
-
-We're passionate about building real-world AI tools for HR automation, with expertise in NLP, resume parsing, and full-stack development.
-
----
-
-<div align="center">
-
-*⭐ Star this repo if you find it helpful! ⭐*
-
-</div>
-
-<script>
-// Table of Contents smooth scrolling
-document.addEventListener('DOMContentLoaded', function() {
-    const links = document.querySelectorAll('a[href^="#"]');
-    
-    links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 20,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-});
-</script>
-
-<style>
-/* Beautiful styling for the README */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-h1, h2, h3, h4 {
-    color: #2d3748;
-    margin-top: 1.5em;
-}
-
-h1 {
-    border-bottom: 3px solid #4299e1;
-    padding-bottom: 10px;
-}
-
-h2 {
-    border-left: 4px solid #4299e1;
-    padding-left: 15px;
-    margin-top: 2em;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1em 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-th {
-    background-color: #f7fafc;
-    font-weight: 600;
-}
-
-tr:hover {
-    background-color: #f8fafc;
-}
-
-code {
-    background-color: #f7fafc;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.9em;
-}
-
-pre {
-    background-color: #f7fafc;
-    padding: 15px;
-    border-radius: 5px;
-    overflow-x: auto;
-    border-left: 4px solid #4299e1;
-}
-
-a {
-    color: #4299e1;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Custom styling for feature sections */
-.feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin: 20px 0;
-}
-
-.feature-card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-left: 4px solid #4299e1;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-    
-    .feature-grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
