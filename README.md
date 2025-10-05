@@ -4,21 +4,21 @@ An AI-powered web application that allows HR users to automatically screen CVs, 
 
 ---
 
-📑 Table of Contents
-- Overview
-- Tech-Stack
-- Features
-- Project-Structure
-- Environment-Variables
-- Setup--Installation
-- Backend-Setup
-- Frontend-Setup
-- Firebase-Setup
-- Usage-Guide
-- API-Endpoints
-- How-Scoring-Works
-- Authors
+## 📑 Table of Contents
 
+- [Overview](#-overview)
+- [Tech Stack](#-tech-stack)
+- [Features](#-features)
+- [Project Structure](#-project-structure)
+- [Environment Variables](#%EF%B8%8F-environment-variables)
+- [Setup & Installation](#-setup--installation)
+- [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
+- [Firebase Setup](#-firebase-setup)
+- [Usage Guide](#-usage-guide)
+- [API Endpoints](#-api-endpoints)
+- [How Scoring Works](#-how-scoring-works)
+- [Authors](#-authors)
 
 ---
 
@@ -36,12 +36,9 @@ This intelligent tool helps recruiters automatically extract and analyze informa
 - 🗃️ **SQLite** – Lightweight, file-based database storage
 - 📄 **pdfplumber** – Text extraction from standard PDF resumes
 - 🖼️ **PyMuPDF (fitz)** – Scanned PDF processing for OCR fallback
-- 🔍 **pytesseract** – OCR on scanned resume images
 - 🧪 **RapidFuzz** – Fuzzy logic skill matching
 - 🔗 **regex** – Contact info extraction (email, phone, links)
 - 🧬 **spaCy** – NLP for skill normalization
-- ✅ **Pydantic** – Data validation and serialization
-- 📤 **jinja2** – CSV export template rendering
 - 🔐 **Firebase Admin SDK** – User identity verification
 - 🚀 **Uvicorn** – Development server with hot reload
 
@@ -187,5 +184,3 @@ Additional weight is given to education and experience keywords for more natural
 ## 👥 Authors
 
 **Developed with ❤️ by Nouf Al-Rashdi & Sara Al-Abbadi**
-
-
